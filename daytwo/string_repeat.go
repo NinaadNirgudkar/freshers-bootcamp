@@ -12,9 +12,10 @@ func StringRepeatCounter() {
 	inputStrings := []string{"quickk", "kbrown", "fox", "lazy", "dog"}
 
 	// Create a channel to receive results
-	resultChannel := make(chan map[string]int)
+	resultChannel := make(chan map[string]int, len(inputStrings))
 
 	var wg sync.WaitGroup
+	defer wg.Wait()
 
 	// Launch a goroutine for each string in the input
 	for _, str := range inputStrings {
@@ -25,22 +26,31 @@ func StringRepeatCounter() {
 		}(str)
 	}
 
+	//go func() {
+	//	wg.Wait()
+	//	close(resultChannel)
+	//}()
+
 	finalOccurrences := make(map[string]int)
-	for result := range resultChannel {
-		pullCounter++
-		fmt.Println("pullCounter", pullCounter)
-		for key, value := range result {
-
-			fmt.Println(key, value, finalOccurrences)
-			finalOccurrences[string(key)] += value
+	go func() {
+		for result := range resultChannel {
+			pullCounter++
+			fmt.Println("pullCounter", pullCounter)
+			for key, value := range result {
+				//fmt.Println(key, value, finalOccurrences)
+				finalOccurrences[string(key)] += value
+			}
 		}
-	}
-
+	}()
+	//go func() {
+	wg.Wait()
 	close(resultChannel)
+	//}()
+
+	//close(resultChannel)
 
 	// Print the final frequencies
 	fmt.Println(finalOccurrences)
-	defer wg.Wait()
 }
 
 func processString(str string, resultChannel chan<- map[string]int) {
@@ -48,9 +58,9 @@ func processString(str string, resultChannel chan<- map[string]int) {
 	occurrences := make(map[string]int)
 	for _, c := range str {
 		occurrences[string(c)]++ //= (occurrences[string(c)] | 0) + 1
-		fmt.Println("pushing", string(c))
+		//fmt.Println("pushing", string(c))
 	}
 	pushCounter++
-	fmt.Println(pushCounter)
+	fmt.Println("pushCounter", pushCounter)
 	resultChannel <- occurrences
 }

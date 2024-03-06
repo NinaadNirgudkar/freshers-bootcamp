@@ -1,5 +1,6 @@
 package daytwo
 
 func DayTwo() {
-	StringRepeatCounter()
+	//StringRepeatCounter()
+	Ratings()
 }
