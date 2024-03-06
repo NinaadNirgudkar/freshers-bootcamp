@@ -1,11 +1,12 @@
 package main
 
 import (
-	"bootcamp/dayone"
+	"bootcamp/daytwo"
 	"fmt"
 )
 
 func main() {
 	fmt.Println("Hello World")
-	dayone.DayOne()
+	//dayone.DayOne()
+	daytwo.DayTwo()
 }
