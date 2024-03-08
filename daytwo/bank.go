@@ -12,29 +12,32 @@ func Bank() {
 	bank = &BankAccount{balance: 500}
 	wa.Add(3)
 	go func() {
+		defer wa.Done()
 		remainingBalance, err := bank.deposit(20.0)
 		if err != nil {
 			fmt.Println(err.Error(), "Remaining balance:", remainingBalance)
+			return
 		}
 		fmt.Println("Deposit Success, remaining balance:", remainingBalance)
-		wa.Done()
 	}()
 	go func() {
-
+		defer wa.Done()
 		remainingBalance, err := bank.withdraw(700.3)
 		if err != nil {
 			fmt.Println(err.Error(), "Remaining balance:", remainingBalance)
+			return
 		}
 		fmt.Println("Withdraw Success, remaining balance:", remainingBalance)
-		wa.Done()
 	}()
 	go func() {
+		defer wa.Done()
 		remainingBalance, err := bank.withdraw(700.3)
+		fmt.Println(remainingBalance, err)
 		if err != nil {
 			fmt.Println(err.Error(), "Remaining balance:", remainingBalance)
+			return
 		}
 		fmt.Println("Withdraw Success, remaining balance:", remainingBalance)
-		wa.Done()
 	}()
 	wa.Wait()
 
@@ -51,25 +54,20 @@ type BankAccount struct {
 }
 
 func (b *BankAccount) withdraw(amt float64) (float64, error) {
-	if amt <= 0 {
-		return b.balance, errors.New("withdrawl amount needs to be greater than 0")
+	b.mux.Lock()
+	defer b.mux.Unlock()
+	if b.balance-amt <= 0 {
+		return b.balance, errors.New("Withdrawl failed.")
 	}
-	result := b.balance - amt
-	if amt < 0 {
-		return b.balance, errors.New("insufficient balance")
-	} else {
-		b.mux.Lock()
-		defer b.mux.Unlock()
-		b.balance -= amt
-	}
-	return result, nil
+	b.balance -= amt
+	return b.balance, nil
 }
 func (b *BankAccount) deposit(amt float64) (float64, error) {
+	b.mux.Lock()
+	defer b.mux.Unlock()
 	if amt <= 0 {
 		return b.balance, errors.New("deposit amount needs to be greater than 0")
 	}
-	b.mux.Lock()
-	defer b.mux.Unlock()
 	b.balance += amt
 	return b.balance, nil
 }

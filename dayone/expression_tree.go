@@ -1,8 +1,11 @@
 package dayone
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func Express() {
+	return
 	expression := "a+b-c"
 	expTree := ExpressionTree{[]*Node{nil}}
 	for _, c := range expression {
@@ -15,8 +18,8 @@ func Express() {
 			fmt.Println("operator")
 			left := expTree.pop()
 			right := expTree.pop()
-			newNode := &Node{left: left, right: right, value: str}
-			expTree.push(newNode)
+			newNode := Node{left: left, right: right, value: str}
+			expTree.push(&newNode)
 		default:
 			fmt.Println("operand")
 			// If a character is an operand push that into the stack

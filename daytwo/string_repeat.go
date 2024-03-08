@@ -5,9 +5,6 @@ import (
 	"sync"
 )
 
-var pushCounter = 0
-var pullCounter = 0
-
 func StringRepeatCounter() {
 	inputStrings := []string{"quickk", "kbrown", "fox", "lazy", "dog"}
 
@@ -26,29 +23,17 @@ func StringRepeatCounter() {
 		}(str)
 	}
 
-	//go func() {
-	//	wg.Wait()
-	//	close(resultChannel)
-	//}()
-
+	//club all the individual string calculations
 	finalOccurrences := make(map[string]int)
 	go func() {
 		for result := range resultChannel {
-			pullCounter++
-			fmt.Println("pullCounter", pullCounter)
 			for key, value := range result {
-				//fmt.Println(key, value, finalOccurrences)
 				finalOccurrences[string(key)] += value
 			}
 		}
 	}()
-	//go func() {
 	wg.Wait()
 	close(resultChannel)
-	//}()
-
-	//close(resultChannel)
-
 	// Print the final frequencies
 	fmt.Println(finalOccurrences)
 }
@@ -57,10 +42,7 @@ func processString(str string, resultChannel chan<- map[string]int) {
 
 	occurrences := make(map[string]int)
 	for _, c := range str {
-		occurrences[string(c)]++ //= (occurrences[string(c)] | 0) + 1
-		//fmt.Println("pushing", string(c))
+		occurrences[string(c)]++
 	}
-	pushCounter++
-	fmt.Println("pushCounter", pushCounter)
 	resultChannel <- occurrences
 }

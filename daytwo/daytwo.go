@@ -1,7 +1,7 @@
 package daytwo
 
 func DayTwo() {
-	//StringRepeatCounter()
-	//Ratings()
+	StringRepeatCounter()
+	Ratings()
 	Bank()
 }
