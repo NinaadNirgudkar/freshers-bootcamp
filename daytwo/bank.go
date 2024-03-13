@@ -31,7 +31,7 @@ func Bank() {
 	}()
 	go func() {
 		defer wa.Done()
-		remainingBalance, err := bank.withdraw(700.3)
+		remainingBalance, err := bank.withdraw(70.3)
 		fmt.Println(remainingBalance, err)
 		if err != nil {
 			fmt.Println(err.Error(), "Remaining balance:", remainingBalance)

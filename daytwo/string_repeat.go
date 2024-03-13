@@ -31,11 +31,11 @@ func StringRepeatCounter() {
 				finalOccurrences[string(key)] += value
 			}
 		}
+		// Print the final frequencies
+		fmt.Println(finalOccurrences)
 	}()
 	wg.Wait()
 	close(resultChannel)
-	// Print the final frequencies
-	fmt.Println(finalOccurrences)
 }
 
 func processString(str string, resultChannel chan<- map[string]int) {
